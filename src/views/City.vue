@@ -45,7 +45,7 @@ export default {
             // alert(item.name)
             this.setCityName(item.name)
             this.setCityId(item.cityId)
-            localStorage.setItem("")
+            // localStorage.setItem("")
             this.$router.push("/cinema")
         },
         dataFilter(cities){

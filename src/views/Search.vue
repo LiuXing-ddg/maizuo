@@ -1,65 +1,58 @@
 <template>
-    <div class="search">
-        <div class="query">
-            <!-- <input type="text" v-model="mytext">
-            <button @click="handleChangepage">取消</button> -->
-            <div>
-            <van-search
+<div class="search">
+    <div class="query">
+        <!-- <input type="text" v-model="mytext">
+        <button @click="handleChangepage">取消</button> -->
+       
+        <van-search
             v-model="mytext"
             show-action autofocus="true"
             placeholder="搜索关键词"
             @cancel="handleChangepage"
-           
-        /> 
-            </div>
-        </div>
+        />
+       
         <div v-show="mytext">
             <ul v-if="searchDatalist.length">
-                <!-- <li
-                    v-for="data in searchDatalist"
-                    :key="data.cinemaId"
-                >{{data.name}}
-                </li> -->
-                <CinemaItem
+                <Cinema-item
                     v-for="data in searchDatalist"
                     :key="data.cinemaId"
                     :data="data"
                 >
-                </CinemaItem>
+                </Cinema-item>
             </ul>
             <div v-else>
-                没有找到匹配的影院
+                没有匹配到你输入影院
             </div>
         </div>
-         <div class="distance" v-show="!mytext">
-             <p>离你最近</p>
-             <!-- <ul>
-                 <li
-                    v-for="data in topDataList"
-                    :key="data.cinemaId"
-                 >
-                    {{data.name}}
-                 </li>
-             </ul> -->
-             <van-list>
-                <van-cell 
-                v-for="data in topDataList" 
-                :key="data.cinemaId" 
-                :title="data.name"
-                :label="data.adress"
-                @click="clickMe(data.cinemaId)"
-                 />
-             </van-list>
-         </div>
     </div>
+
+   <div v-show="!mytext" class="distance">
+       <p>离你最近</p>
+       <ul>
+           <!-- <li
+            v-for="data in topDataList"
+            :key="data.cinemaId"
+           >{{data.name}}
+           </li> -->
+           <van-list>
+               <van-cell v-for="data in topDataList" 
+               :key="data.cinemaId" 
+               :title="data.name" 
+               :label="data.address"
+               @click="clickMe(data.cinemaId)"
+               />
+           </van-list>
+       </ul>
+   </div>
+   </div>
 </template>
 <script>
 import Vue from 'vue';
-import CinemaItem from "./Cinema/CinemaItem"
 import {Search,List,Cell} from 'vant';
 Vue.use(Search);
-Vue.use(List);
-Vue.use(Cell);
+Vue.use(List)
+Vue.use(Cell)
+import CinemaItem from "./Cinema/CinemaItem"
 import {mapState,mapGetters,mapActions,mapMutations} from "vuex"
 export default {
     components:{
@@ -69,6 +62,17 @@ export default {
         return{
             mytext:""
         }
+    },
+    methods:{
+        clickMe(cinemaId){
+            console.log(cinemaId)
+            this.$router.push(`/cinema/${cinemaId}/film`)
+        },
+        handleChangepage(){
+            this.$router.back()
+        },
+        ...mapActions("cinema",["getCinemaActions"]),
+        ...mapMutations("tabbar",["hide","show"])
     },
     computed:{
         ...mapState("cinema",["cinemaList"]),
@@ -80,22 +84,10 @@ export default {
             )
         }
     },
-    methods:{
-        handleChangepage(){
-            this.$router.back()
-        },
-        clickMe(cinemaId){
-            console.log(cinemaId)
-            //跳转
-            // this.$router.push("/detail/"+cinemaId)
-        },
-        ...mapActions("cinema",["getCinemaActions"]),
-        ...mapMutations("tabbar",["hide","show"])
-    },
     mounted(){
         this.hide()
         if(this.cinemaList.length>0){
-
+            // console.log("seach 使用vuex缓存的数据")
         }else{
             this.getCinemaActions()
         }
@@ -105,12 +97,7 @@ export default {
     }
 }
 </script>
-<style lang="scss">
-    *{
-        margin: 0 auto;
-        padding: 0;
-    }
-    
+<style lang="scss" scoped>
     .distance{
         padding-left:10px;
         p{
@@ -124,9 +111,8 @@ export default {
             flex-wrap: wrap;
             li{
                 margin-bottom: 10px;
-                margin-left: 10px;
+                margin-right: 10px;
                 height: 30px;
-                list-style: none;
                 background-color: hsla(0,0%,96%,.6);
                 line-height: 14px;
                 border-radius: 3px;
